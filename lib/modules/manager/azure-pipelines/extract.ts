@@ -30,8 +30,15 @@ export function extractRepository(
     const platform = GlobalConfig.get('platform');
     const endpoint = GlobalConfig.get('endpoint');
     if (platform === 'azure' && endpoint) {
+      let projectName = null;
+      let repoName = null;
       if (repository.name.includes('/')) {
-        const [projectName, repoName] = repository.name.split('/');
+        [projectName, repoName] = repository.name.split('/');
+      } else {
+        repoName = repository.name;
+        projectName = process.env.ADO_PROJECT_NAME ?? null;
+      }
+      if (projectName !== null && repoName !== null) {
         repositoryUrl = joinUrlParts(
           endpoint,
           encodeURIComponent(projectName),
